@@ -1,43 +1,39 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import userRoutes from './routes/userRoute.js';
 
-const app = express();
-app.use(bodyParser.json());
-// Load environment variables as early as possible
+// Load env first
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
-// Accept several common env names so existing .env files work
-let MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.DATABASE_URL;
+const app = express();
+app.use(express.json());
 
-// Normalize the URI: trim whitespace and strip surrounding quotes if present
-if (typeof MONGO_URI === 'string') {
-  MONGO_URI = MONGO_URI.trim();
-  if ((MONGO_URI.startsWith('"') && MONGO_URI.endsWith('"')) || (MONGO_URI.startsWith("'") && MONGO_URI.endsWith("'"))) {
-    MONGO_URI = MONGO_URI.slice(1, -1);
+app.use('/api', userRoutes);
+
+// Error handling middleware for JSON parsing errors
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ error: 'Invalid JSON in request body' });
   }
-}
+  next();
+});
+
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = (process.env.MONGO_URI || process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.DATABASE_URL || '').replace(/^\s+|\s+$/g, '').replace(/^['"]|['"]$/g, '');
 
 if (!MONGO_URI) {
-  console.error('\nERROR: Missing MongoDB connection string.');
-  console.error('Set `MONGO_URI` in a `.env` file or in your environment variables.');
-  console.error('Example .env content: MONGO_URI=mongodb://127.0.0.1:27017/mern-crud\n');
+  console.error('Missing MONGO_URI environment variable.');
   process.exit(1);
 }
 
-// Connect with default options (modern MongoDB driver ignores old flags)
 mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+    app.listen(PORT, () => console.log(`Server running on ${PORT}`));
   })
-  .catch((error) => {
-    console.error('Failed to connect to MongoDB:');
-    console.error(error);
+  .catch((err) => {
+    console.error('MongoDB connection error:', err.message || err);
     process.exit(1);
   });
     
