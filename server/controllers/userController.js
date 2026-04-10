@@ -2,11 +2,11 @@ import User from '../models/User.js';
 
 export const create = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, address } = req.body;
     if (!name || !email) {
       return res.status(400).json({ error: 'Name and email are required' });
     }
-    const user = new User({ name, email });
+    const user = new User({ name, email, address });
     const savedUser = await user.save();
     console.log('User saved:', savedUser);
     return res.status(201).json({ message: 'User created', data: savedUser });
@@ -57,4 +57,20 @@ export const deleteById = async (req, res) => {
   }
 };
 
-export default { create, getAll, getById, deleteById };
+export const updateAddressField = async (req, res) => {
+  try {
+    const result = await User.updateMany(
+      { address: { $exists: false } },
+      { $set: { address: '' } }
+    );
+    return res.status(200).json({ 
+      message: 'Address field added to existing records', 
+      modifiedCount: result.modifiedCount 
+    });
+  } catch (err) {
+    console.error('Error updating records:', err);
+    return res.status(500).json({ error: err?.message || 'Internal server error' });
+  }
+};
+
+export default { create, getAll, getById, deleteById, updateAddressField };
