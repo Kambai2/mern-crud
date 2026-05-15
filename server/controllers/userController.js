@@ -57,20 +57,25 @@ export const deleteById = async (req, res) => {
   }
 };
 
-export const updateAddressField = async (req, res) => {
+export const updateById = async (req, res) => {
   try {
-    const result = await User.updateMany(
-      { address: { $exists: false } },
-      { $set: { address: '' } }
-    );
-    return res.status(200).json({ 
-      message: 'Address field added to existing records', 
-      modifiedCount: result.modifiedCount 
-    });
+    const { id } = req.params;
+    const { name, email } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Name and email are required' });
+    }
+    const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    return res.status(200).json({ message: 'User updated successfully', data: updatedUser });
   } catch (err) {
-    console.error('Error updating records:', err);
+    console.error('Error updating user:', err);
+    if (err.code === 11000) {
+      return res.status(400).json({ error: 'User with this email already exists' });
+    }
     return res.status(500).json({ error: err?.message || 'Internal server error' });
   }
 };
 
-export default { create, getAll, getById, deleteById, updateAddressField };
+

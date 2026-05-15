@@ -33,13 +33,13 @@ const UpdateUser = () => {
 
     const submitForm = async(e) =>{
         e.preventDefault();
-        await axios.post("http://localhost:5000/api/user", user)
+        await axios.put(`http://localhost:5000/api/user/${id}`, user)
         .then((res)=>{
-          console.log("User created successfully", res.data);
-          toast.success("User created successfully");
+          console.log("User updated successfully", res.data);
+          toast.success("User updated successfully");
         })
         .then(()=>navigate("/"))
-        .catch((err)=>console.log("Error while creating user", err));
+        .catch((err)=>console.log("Error while updating user", err));
         }
   return (
     <div className='updateUser'>
