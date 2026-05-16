@@ -37,8 +37,8 @@ const deleteUser = async (id) => {
 
   return (
     <div className='userTable'>
-        <Link to="/add" type="button" class="btn btn-primary">
-            Add User <i class="fa-solid fa-user-plus"></i></Link>
+        <Link to="/add" type="button" className="btn btn-primary">
+            Add User <i className="fa-solid fa-user-plus"></i></Link>
 
 {users.length === 0 ? (
     <div className='noData'>
@@ -46,7 +46,8 @@ const deleteUser = async (id) => {
         <p>Please add New Users</p>
     </div>
 ):(
-      <table className='table table-border' style={{marginTop: '20px'}}>
+      <div className='table-responsive'>
+        <table className='table table-border' style={{marginTop: '20px'}}>
             <thead>
                 <tr>
                     <th scope="col">S.No.</th>
@@ -59,18 +60,18 @@ const deleteUser = async (id) => {
             <tbody>
                 {users.map((user, index) => {
                     return(
-                         <tr>
+                         <tr key={user._id}>
                     <td>{index + 1}</td>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
                     <td>{user.address}</td>
                       <td className='actionButtons'>
-                        <Link to={`/update/`+user._id} type="button" class="btn btn-info">
-                             <i class="fa-solid fa-pen-to-square"></i>
+                        <Link to={`/update/${user._id}`} type="button" className="btn btn-info">
+                             <i className="fa-solid fa-pen-to-square"></i>
                         </Link>
                        
-                        <button type="button" class="btn btn-danger" onClick={() => deleteUser(user._id)}>
-                              <i class="fa-solid fa-trash"></i>
+                        <button type="button" className="btn btn-danger" onClick={() => deleteUser(user._id)}>
+                              <i className="fa-solid fa-trash"></i>
                         </button>
                       
                         </td>
@@ -80,6 +81,7 @@ const deleteUser = async (id) => {
 
             </tbody>
         </table>
+      </div>
 )}
 
       
