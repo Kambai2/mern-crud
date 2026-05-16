@@ -2,6 +2,7 @@ import React, { useEffect, useState} from 'react'
 import "./user.css"
 import axios from 'axios';  
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 const User = () => {
     const [users, setUsers] = useState([]);
 
@@ -19,6 +20,19 @@ const fetchUsers = async () => {
     }
 };
 
+const deleteUser = async (id) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+        try {
+            await axios.delete(`http://localhost:5000/api/delete/user/${id}`);
+            toast.success('User deleted successfully');
+            fetchUsers();
+        } catch (error) {
+            console.log("Error while deleting user", error);
+            toast.error('Error deleting user');
+        }
+    }
+};
+
 // Inline add-user form removed; Add User navigates to separate page
 
   return (
@@ -26,7 +40,13 @@ const fetchUsers = async () => {
         <Link to="/add" type="button" class="btn btn-primary">
             Add User <i class="fa-solid fa-user-plus"></i></Link>
 
-        <table className='table table-border' style={{marginTop: '20px'}}>
+{users.length === 0 ? (
+    <div className='noData'>
+        <h3>No Data to display.</h3>
+        <p>Please add New Users</p>
+    </div>
+):(
+      <table className='table table-border' style={{marginTop: '20px'}}>
             <thead>
                 <tr>
                     <th scope="col">S.No.</th>
@@ -49,7 +69,7 @@ const fetchUsers = async () => {
                              <i class="fa-solid fa-pen-to-square"></i>
                         </Link>
                        
-                        <button type="button" class="btn btn-danger">
+                        <button type="button" class="btn btn-danger" onClick={() => deleteUser(user._id)}>
                               <i class="fa-solid fa-trash"></i>
                         </button>
                       
@@ -60,6 +80,9 @@ const fetchUsers = async () => {
 
             </tbody>
         </table>
+)}
+
+      
     </div>
   )
 }

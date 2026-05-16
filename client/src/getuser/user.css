@@ -29,3 +29,10 @@
 .actionButtons button{
     margin:0 10px;
 }
+
+.noData{
+    text-align: center;
+    font-size: 18px;
+    color: gray;
+    margin-top: 20px;
+}

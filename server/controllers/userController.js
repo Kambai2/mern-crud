@@ -50,7 +50,7 @@ export const deleteById = async (req, res) => {
     if (!deletedUser) {
       return res.status(404).json({ error: 'User not found' });
     }
-    return res.status(200).json({ message: 'User deleted', data: deletedUser });
+    return res.status(200).json({ message: 'User deleted successfully', data: deletedUser });
   } catch (err) {
     console.error('Error deleting user:', err);
     return res.status(500).json({ error: err?.message || 'Internal server error' });
