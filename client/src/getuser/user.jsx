@@ -3,6 +3,9 @@ import "./user.css"
 import axios from 'axios';  
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const User = () => {
     const [users, setUsers] = useState([]);
 
@@ -12,7 +15,7 @@ useEffect(() => {
 
 const fetchUsers = async () => {
     try { 
-     const response = await axios.get("http://localhost:5000/api/users")
+     const response = await axios.get(`${API_BASE_URL}/users`)
      setUsers(response.data.data);
 
     } catch (error) {
@@ -23,7 +26,7 @@ const fetchUsers = async () => {
 const deleteUser = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
         try {
-            await axios.delete(`http://localhost:5000/api/delete/user/${id}`);
+            await axios.delete(`${API_BASE_URL}/delete/user/${id}`);
             toast.success('User deleted successfully');
             fetchUsers();
         } catch (error) {

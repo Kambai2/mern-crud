@@ -4,6 +4,7 @@ import "./addUser.css";
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const AddUser = () => {
     const users = {
@@ -23,7 +24,7 @@ const AddUser = () => {
 
     const submitForm = async(e) =>{
         e.preventDefault();
-        await axios.post("http://localhost:5000/api/user", user)
+        await axios.post(`${API_BASE_URL}/user`, user)
         .then((res)=>{
           console.log("User created successfully", res.data);
           toast.success("User created successfully");

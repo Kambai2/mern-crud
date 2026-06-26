@@ -4,6 +4,7 @@ import "./update.css";
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const UpdateUser = () => {
     const users = {
@@ -23,7 +24,7 @@ const UpdateUser = () => {
     };
 
     useEffect (()=>{
-        axios.get(`http://localhost:5000/api/user/${id}`)
+        axios.get(`${API_BASE_URL}/user/${id}`)
         .then((res)=>{ 
             console.log("User fetched successfully", res.data);
             setUser(res.data.data);
@@ -33,7 +34,7 @@ const UpdateUser = () => {
 
     const submitForm = async(e) =>{
         e.preventDefault();
-        await axios.put(`http://localhost:5000/api/user/${id}`, user)
+        await axios.put(`${API_BASE_URL}/user/${id}`, user)
         .then((res)=>{
           console.log("User updated successfully", res.data);
           toast.success("User updated successfully");
